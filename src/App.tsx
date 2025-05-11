@@ -8,14 +8,23 @@ import NotFound from "./pages/NotFound";
 import PhotosPage from "./pages/PhotosPage";
 import AddPhotoPage from "./pages/AddPhotoPage";
 
-const queryClient = new QueryClient();
+// Создаем клиент с опциями по умолчанию для решения проблемы
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 минут
+    },
+  },
+});
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <BrowserRouter>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <Toaster />
+        <Sonner />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/photos" element={<PhotosPage />} />
@@ -24,9 +33,9 @@ const App = () => (
           <Route path="/about" element={<Index />} /> {/* Placeholder route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+      </QueryClientProvider>
     </TooltipProvider>
-  </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
